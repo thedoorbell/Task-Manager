@@ -1,13 +1,13 @@
 // @ts-check
 
-import path from 'path';
-import { fileURLToPath } from 'url';
+import path from 'path'
+import { fileURLToPath } from 'url'
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 const migrations = {
   directory: path.join(__dirname, 'server', 'migrations'),
-};
+}
 
 export const development = {
   client: 'sqlite3',
@@ -16,7 +16,7 @@ export const development = {
   },
   useNullAsDefault: true,
   migrations,
-};
+}
 
 export const test = {
   client: 'sqlite3',
@@ -24,7 +24,7 @@ export const test = {
   useNullAsDefault: true,
   // debug: true,
   migrations,
-};
+}
 
 export const production = {
   client: 'sqlite3',
@@ -33,4 +33,4 @@ export const production = {
   },
   useNullAsDefault: true,
   migrations,
-};
+}

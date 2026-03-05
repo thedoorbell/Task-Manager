@@ -1,14 +1,14 @@
 // @ts-check
 
-import i18next from 'i18next';
-import _ from 'lodash';
+import i18next from 'i18next'
+import _ from 'lodash'
 
 export default (app) => ({
   route(name) {
-    return app.reverse(name);
+    return app.reverse(name)
   },
   t(key) {
-    return i18next.t(key);
+    return i18next.t(key)
   },
   _,
   getAlertClass(type) {
@@ -16,17 +16,17 @@ export default (app) => ({
       // case 'failure':
       //   return 'danger';
       case 'error':
-        return 'danger';
+        return 'danger'
       case 'success':
-        return 'success';
+        return 'success'
       case 'info':
-        return 'info';
+        return 'info'
       default:
-        throw new Error(`Unknown flash type: '${type}'`);
+        throw new Error(`Unknown flash type: '${type}'`)
     }
   },
   formatDate(str) {
-    const date = new Date(str);
-    return date.toLocaleString();
+    const date = new Date(str)
+    return date.toLocaleString()
   },
-});
+})
