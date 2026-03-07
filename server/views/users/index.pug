@@ -1,15 +1,19 @@
 extends ../layouts/application.pug
 
+block header
+  = t('layouts.application.users')
+
 block content
-  table.table.table-striped
-    thead
-      tr
-        th= t('views.users.id')
-        th= t('views.users.email')
-        th= t('views.users.createdAt')
-    tbody
-      each user in users
+  .table-responsive
+    table.table.table-borderless.table-striped.mt-5.bg-white
+      thead
         tr
-          td= user.id
-          td= user.email
-          td= formatDate(user.createdAt)
+          th= t('views.users.id')
+          th= t('views.users.email')
+          th= t('views.users.createdAt')
+      tbody
+        each user in users
+          tr
+            td= user.id
+            td= user.email
+            td= formatDate(user.createdAt)

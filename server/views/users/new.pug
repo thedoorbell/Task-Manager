@@ -4,7 +4,12 @@ block header
   = t('views.users.new.signUp')
 
 block content
-  +formFor()(action=route('users') method='post')
-    +input(user, 'email', errors)(type="text")
-    +input(user, 'password', errors)(type="password")
-    +submit(user)(value=t('views.users.new.submit'))
+  .row.justify-content-center
+      .col-12.col-md-4.mt-3
+        .card.shadow-sm
+          .card-body
+            .col-12.mt-3.mt-mb-0
+              +formFor()(action=route('users') method='post')
+                +input(user, 'email', errors)(type="text")
+                +input(user, 'password', errors)(type="password")
+                +submit(user)(value=t('views.users.new.submit'))
