@@ -12,5 +12,5 @@ make setup
 
 ```bash
 $ make start
-# Open localhost:5000
 ```
+  

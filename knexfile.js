@@ -2,6 +2,9 @@
 
 import path from 'path'
 import { fileURLToPath } from 'url'
+import { config } from 'dotenv'
+
+config()
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -27,10 +30,16 @@ export const test = {
 }
 
 export const production = {
-  client: 'sqlite3',
+  client: 'pg',
   connection: {
-    filename: path.resolve(__dirname, 'database.sqlite'),
+    connectionString: process.env.DATABASE_URL,
+    ssl: {
+      rejectUnauthorized: false,
+    },
   },
-  useNullAsDefault: true,
   migrations,
+  pool: {
+    min: 2,
+    max: 10,
+  },
 }

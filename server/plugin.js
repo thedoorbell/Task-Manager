@@ -16,6 +16,7 @@ import fastifyObjectionjs from 'fastify-objectionjs'
 import qs from 'qs'
 import Pug from 'pug'
 import i18next from 'i18next'
+import dotenv from 'dotenv'
 
 import ru from './locales/ru.js'
 import en from './locales/en.js'
@@ -29,7 +30,13 @@ import FormStrategy from './lib/passportStrategies/FormStrategy.js'
 const __dirname = fileURLToPath(path.dirname(import.meta.url))
 
 const mode = process.env.NODE_ENV || 'development'
-// const isDevelopment = mode === 'development';
+// const isDevelopment = mode === 'development'
+
+// Load env vars from .env first, then override with .env.<NODE_ENV> if present
+dotenv.config()
+if (process.env.NODE_ENV) {
+  dotenv.config({ path: `./.env.${process.env.NODE_ENV}` })
+}
 
 const setUpViews = (app) => {
   const helpers = getHelpers(app)
