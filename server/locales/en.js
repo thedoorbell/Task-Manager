@@ -39,7 +39,12 @@ export default {
       users: {
         id: 'ID',
         email: 'Email',
+        password: 'Password',
+        firstName: 'Name',
+        lastName: 'Surname',
+        fullName: 'Full name',
         createdAt: 'Created at',
+        actions: 'Actions',
         new: {
           submit: 'Register',
           signUp: 'Register',
