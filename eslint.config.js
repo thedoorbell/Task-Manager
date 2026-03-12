@@ -56,6 +56,7 @@ export default [
           '**/tests/**'
         ]
       }],
+      "no-useless-escape": "off",
       // turn off extension rule to allow .js imports
       'import/extensions': 'off',
       // disable some advanced import checks that choke on ESM files

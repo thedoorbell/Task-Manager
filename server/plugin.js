@@ -53,7 +53,8 @@ const setUpViews = (app) => {
   })
 
   app.decorateReply('render', function render(viewPath, locals) {
-    this.view(viewPath, { ...locals, reply: this })
+    // Ensure the view rendering promise is returned so Fastify waits for it.
+    return this.view(viewPath, { ...locals, reply: this })
   })
 }
 

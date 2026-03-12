@@ -18,6 +18,15 @@ export default {
           error: 'Failed to register',
           success: 'User registered successfully',
         },
+        delete: {
+          success: 'User deleted successfully',
+          error: 'Failed to delete user',
+        },
+        update: {
+          success: 'User updated successfully',
+          error: 'Failed to update user',
+        },
+        notAllowed: 'You can not edit or delete another user',
       },
       authError: 'Access denied! Please login',
     },
@@ -45,6 +54,9 @@ export default {
         fullName: 'Full name',
         createdAt: 'Created at',
         actions: 'Actions',
+        editUser: 'Edit user',
+        edit: 'Edit',
+        delete: 'Delete',
         new: {
           submit: 'Register',
           signUp: 'Register',
