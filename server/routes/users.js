@@ -66,11 +66,11 @@ export default (app) => {
         await user.$query().delete()
         req.logOut()
         req.flash('info', i18next.t('flash.users.delete.success'))
-        return reply.redirect(app.reverse('root'))
       } catch (err) {
         console.error(err)
         req.flash('error', i18next.t('flash.users.delete.error'))
-        return reply.redirect(app.reverse('users'))
       }
+
+      return reply.redirect(app.reverse('users'))
     })
 }

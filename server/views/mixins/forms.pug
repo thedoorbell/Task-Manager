@@ -15,11 +15,11 @@ mixin input(entity, propertyName, errors = {})
       name=getInputName(propertyName)
       class=classLine
       value=_.get(entity, propertyName, '')
-      placeholder=t(`views.users.${propertyName}`)
+      placeholder=t(`placeholders.${propertyName}`)
     )&attributes(attributes)
     label(
       for= inputId
-    )= t(`views.users.${propertyName}`)
+    )= t(`placeholders.${propertyName}`)
     if !_.isEmpty(propertyErrors)
       .invalid-feedback= propertyErrors.map(({ message }) => message).join('. ')
 
