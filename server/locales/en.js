@@ -22,9 +22,7 @@ export default {
           success: 'You are logged in',
           error: 'Wrong email or password',
         },
-        delete: {
-          success: 'You are logged out',
-        },
+        delete: { success: 'You are logged out' },
       },
       users: {
         create: {
@@ -139,9 +137,7 @@ export default {
         title: 'Statuses',
         name: 'Name',
         createdAt: 'Created at',
-        edit: {
-          title: 'Edit status',
-        },
+        edit: { title: 'Edit status' },
       },
       tasks: {
         title: 'Tasks',
@@ -174,10 +170,8 @@ export default {
           title: 'Create label',
           submit: 'Create',
         },
-        edit: {
-          title: 'Edit label',
-        },
+        edit: { title: 'Edit label' },
       },
     },
   },
-}
+};

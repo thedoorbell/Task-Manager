@@ -22,9 +22,7 @@ export default {
           success: 'Вы залогинены',
           error: 'Неправильный емейл или пароль',
         },
-        delete: {
-          success: 'Вы разлогинены',
-        },
+        delete: { success: 'Вы разлогинены' },
       },
       users: {
         create: {
@@ -139,9 +137,7 @@ export default {
         title: 'Статусы',
         name: 'Наименование',
         createdAt: 'Дата создания',
-        edit: {
-          title: 'Изменение статуса',
-        },
+        edit: { title: 'Изменение статуса' },
       },
       tasks: {
         title: 'Задачи',
@@ -174,10 +170,8 @@ export default {
           title: 'Создание метки',
           submit: 'Создать',
         },
-        edit: {
-          title: 'Изменение метки',
-        },
+        edit: { title: 'Изменение метки' },
       },
     },
   },
-}
+};

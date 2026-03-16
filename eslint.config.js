@@ -1,22 +1,20 @@
-import globals from 'globals'
-import pluginJs from '@eslint/js'
-import stylistic from '@stylistic/eslint-plugin'
-import pluginImport from 'eslint-plugin-import'
+import globals from 'globals';
+import pluginJs from '@eslint/js';
+import pluginImport from 'eslint-plugin-import';
 
 export default [
-  stylistic.configs.recommended,
   pluginJs.configs.recommended,
   pluginImport.flatConfigs.recommended,
   {
     files: [
-      '**/*.{js, mjs}'
+      '**/*.{js,mjs}',
     ],
   },
   {
     ignores: [
       'node_modules/',
       'dist/',
-      '**/*.config.js'
+      '**/*.config.js',
     ],
   },
   {
@@ -31,35 +29,36 @@ export default [
       },
     },
     rules: {
-      'semi': 'off',
-      '@stylistic/semi': ['error', 'never'],
-      'indent': 'off',
-      '@stylistic/indent': ['error', 2],
-      'quotes': 'off',
-      '@stylistic/quotes': ['error', 'single'],
-      'arrow-parens': 'off',
-      '@stylistic/arrow-parens': ['error', 'always'],
-      'comma-dangle': 'off',
-      '@stylistic/comma-dangle': ['error', {
-        arrays: 'never',
-        objects: 'always-multiline',
+      semi: ['error', 'always'],
+      indent: ['error', 2],
+      quotes: ['error', 'single'],
+      'arrow-parens': ['error', 'always'],
+      'comma-dangle': ['error', 'always-multiline'],
+      'brace-style': ['error', '1tbs'],
+      'object-curly-newline': ['error', { multiline: true }],
+      'import/order': ['error', {
+        groups: ['builtin', 'external', 'internal', 'parent', 'sibling', 'index'],
+        pathGroupsExcludedImportTypes: ['builtin'],
       }],
-      'brace-style': 'off',
-      '@stylistic/brace-style': ['error', '1tbs'],
+      'arrow-body-style': ['error', 'as-needed'],
+      'max-len': ['error', { code: 100 }],
+      'no-restricted-syntax': ['error', 'ForInStatement', 'ForOfStatement', 'LabeledStatement', 'WithStatement'],
+      'no-await-in-loop': 'error',
+      'no-shadow': ['error', { builtinGlobals: false, hoist: 'all', allow: [] }],
+      'prefer-destructuring': ['error', { VariableDeclarator: { array: false, object: true }, AssignmentExpression: { array: true, object: true } }, { enforceForRenamedProperties: false }],
+      'quote-props': ['error', 'as-needed'],
       'import/no-extraneous-dependencies': ['error', {
-        'devDependencies': [
+        devDependencies: [
           '__tests__/**',
           '__test__/**',
           '**/*.test.*',
           '**/*.spec.*',
           '**/test/**',
-          '**/tests/**'
-        ]
+          '**/tests/**',
+        ],
       }],
-      "no-useless-escape": "off",
-      // turn off extension rule to allow .js imports
+      'no-useless-escape': 'off',
       'import/extensions': 'off',
-      // disable some advanced import checks that choke on ESM files
       'import/namespace': 'off',
       'import/default': 'off',
       'import/no-named-as-default': 'off',
@@ -67,10 +66,12 @@ export default [
     },
     settings: {
       'import/resolver': {
-        'node': {
-          'extensions': ['.js', '.mjs']
-        }
-      }
+        node: {
+          extensions: ['.js', '.mjs'],
+        },
+      },
     },
-  }
-]
+  },
+];
+
+

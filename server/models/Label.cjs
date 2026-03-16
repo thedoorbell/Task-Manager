@@ -1,18 +1,16 @@
-const BaseModel = require('./BaseModel.cjs')
+const BaseModel = require('./BaseModel.cjs');
 
 module.exports = class Label extends BaseModel {
   static get tableName() {
-    return 'labels'
+    return 'labels';
   }
 
   static get jsonSchema() {
     return {
       type: 'object',
       required: ['name'],
-      properties: {
-        name: { type: 'string', minLength: 1 },
-      },
-    }
+      properties: { name: { type: 'string', minLength: 1 } },
+    };
   }
 
   static get relationMappings() {
@@ -29,6 +27,6 @@ module.exports = class Label extends BaseModel {
           to: 'tasks.id',
         },
       },
-    }
+    };
   }
-}
+};
