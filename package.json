@@ -5,7 +5,7 @@
    "description": "Task Manager",
    "main": "./server/plugin.js",
    "engines": {
-      "node": "18.x"
+      "node": ">=18.x"
    },
    "scripts": {
       "prebuild": "rm -rf dist",
