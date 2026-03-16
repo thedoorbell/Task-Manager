@@ -20,6 +20,6 @@ block content
             td= status.name
             td= formatDate(status.createdAt)
             td
-              .d-flex.flex-wrap
+              .d-flex
                 a.btn.btn-primary.me-1(href=route('editStatus', { id: status.id }))= t('layouts.edit')
                 +buttonTo(route('deleteStatus', { id: status.id }), 'delete')(class="btn btn-danger" value=t('layouts.delete'))

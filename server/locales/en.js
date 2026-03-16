@@ -70,6 +70,20 @@ export default {
         },
         notAllowedTask: 'Only the author can delete the task',
       },
+      labels: {
+        create: {
+          success: 'Label created successfully',
+          error: 'Failed to create label',
+        },
+        update: {
+          success: 'Label updated successfully',
+          error: 'Failed to update label',
+        },
+        delete: {
+          success: 'Label deleted successfully',
+          error: 'Failed to delete label',
+        },
+      },
       authError: 'Access denied! Please login',
     },
     layouts: {
@@ -146,6 +160,20 @@ export default {
         executor: 'Executor',
         creator: 'Creator',
         createdAt: 'Created at',
+      },
+      labels: {
+        title: 'Labels',
+        id: 'ID',
+        name: 'Name',
+        createdAt: 'Created at',
+        new: {
+          create: 'Create label',
+          title: 'Create label',
+          submit: 'Create',
+        },
+        edit: {
+          title: 'Edit label',
+        },
       },
     },
   },

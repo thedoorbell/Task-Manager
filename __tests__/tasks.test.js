@@ -116,6 +116,35 @@ describe('test tasks CRUD', () => {
     })
   })
 
+  it('create with multiple labels works and persists', async () => {
+    const { cookie } = await signIn(testData.users.existing)
+    const status = await createStatus()
+    const label1 = await models.label.query().insert({ name: 'label1' })
+    const label2 = await models.label.query().insert({ name: 'label2' })
+
+    const taskName = `task-${Date.now()}`
+    const response = await app.inject({
+      method: 'POST',
+      url: app.reverse('tasks'),
+      payload: { data: {
+        name: taskName,
+        description: 'desc',
+        statusId: status.id,
+        executorId: '',
+        labels: [label1.id, label2.id],
+      } },
+      cookies: cookie,
+    })
+
+    expect(response.statusCode).toBe(302)
+
+    const task = await models.task.query().findOne({ name: taskName })
+    expect(task).toBeDefined()
+
+    const relatedLabels = await task.$relatedQuery('labels')
+    expect(relatedLabels.map((l) => l.id).sort()).toEqual([label1.id, label2.id].sort())
+  })
+
   it('create with invalid name fails', async () => {
     const { cookie } = await signIn(testData.users.existing)
     const status = await createStatus()

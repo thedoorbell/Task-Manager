@@ -38,7 +38,7 @@ export default [
       'quotes': 'off',
       '@stylistic/quotes': ['error', 'single'],
       'arrow-parens': 'off',
-      '@stylistic/arrow-parens': ['error', 'always'],
+      '@stylistic/arrow-parens': ['error', 'never'],
       'comma-dangle': 'off',
       '@stylistic/comma-dangle': ['error', {
         arrays: 'never',

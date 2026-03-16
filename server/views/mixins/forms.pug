@@ -61,7 +61,7 @@ mixin selectMultiple(entity, propertyName, options = [], errors = {})
     label(for=inputId)= t(`placeholders.${propertyName}`)
     select(
       id=inputId 
-      name=getInputName(propertyName) + '[]'
+      name=getInputName(propertyName)
       class=classLine
       multiple
     )&attributes(attributes)
@@ -72,8 +72,6 @@ mixin selectMultiple(entity, propertyName, options = [], errors = {})
           if Array.isArray(currentValues) && currentValues.includes(opt.id)
             - selected = true
           option(value=opt.id selected=selected)= opt.name
-      else
-        option(value="")
     if !_.isEmpty(propertyErrors)
       .invalid-feedback= propertyErrors.map(({ message }) => message).join('. ')
 
