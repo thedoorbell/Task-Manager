@@ -3,7 +3,9 @@ import i18next from 'i18next'
 export default (app) => {
   app
     .get('/tasks', { name: 'tasks' }, async (req, reply) => {
-      const tasks = await app.objection.models.task.query().withGraphJoined('[status, creator, executor, labels]')
+      const tasks = await app.objection.models.task.query()
+        .withGraphJoined('[status, creator, executor, labels]')
+        .orderBy('id', 'desc')
       return reply.render('tasks/index', { tasks })
     })
     .get('/tasks/new', { name: 'newTask', preValidation: app.authenticate }, async (req, reply) => {
