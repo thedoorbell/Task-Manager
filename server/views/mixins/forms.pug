@@ -17,9 +17,63 @@ mixin input(entity, propertyName, errors = {})
       value=_.get(entity, propertyName, '')
       placeholder=t(`placeholders.${propertyName}`)
     )&attributes(attributes)
-    label(
-      for= inputId
-    )= t(`placeholders.${propertyName}`)
+    label(for=inputId)= t(`placeholders.${propertyName}`)
+    if !_.isEmpty(propertyErrors)
+      .invalid-feedback= propertyErrors.map(({ message }) => message).join('. ')
+
+mixin textarea(entity, propertyName, errors = {})
+  - propertyErrors = _.get(errors, propertyName)
+  - classLine = 'form-control' + (_.isEmpty(propertyErrors) ? '' : ' is-invalid')
+  - inputId = getInputId(propertyName)
+  .mb-3(class=(errors[propertyName] && 'has-danger'))
+    label(for=inputId)= t(`placeholders.${propertyName}`)
+    textarea(
+      id= inputId
+      name=getInputName(propertyName)
+      class=classLine
+    )&attributes(attributes)= _.get(entity, propertyName, '')
+    if !_.isEmpty(propertyErrors)
+      .invalid-feedback= propertyErrors.map(({ message }) => message).join('. ')
+
+mixin select(entity, propertyName, options, errors = {})
+  - propertyErrors = _.get(errors, propertyName)
+  - classLine = 'form-control' + (_.isEmpty(propertyErrors) ? '' : ' is-invalid')
+  - inputId = getInputId(propertyName)
+  .mb-3
+    label(for=inputId)= t(`placeholders.${propertyName}`)
+    select(id=inputId name=getInputName(propertyName) class=classLine)
+      each opt in options
+        - var selected = false
+        - var currentValue = _.get(entity, propertyName)
+        if opt.id === '' && (currentValue === null || currentValue === undefined)
+          - selected = true
+        else if currentValue == opt.id
+          - selected = true
+        option(value=opt.id selected=selected)= opt.name
+    if !_.isEmpty(propertyErrors)
+      .invalid-feedback= propertyErrors.map(({ message }) => message).join('. ')
+
+mixin selectMultiple(entity, propertyName, options = [], errors = {})
+  - propertyErrors = _.get(errors, propertyName)
+  - classLine = 'form-control' + (_.isEmpty(propertyErrors) ? '' : ' is-invalid')
+  - inputId = getInputId(propertyName)
+  .mb-3
+    label(for=inputId)= t(`placeholders.${propertyName}`)
+    select(
+      id=inputId 
+      name=getInputName(propertyName) + '[]'
+      class=classLine
+      multiple
+    )&attributes(attributes)
+      if options && options.length
+        each opt in options
+          - var selected = false
+          - var currentValues = _.get(entity, propertyName, [])
+          if Array.isArray(currentValues) && currentValues.includes(opt.id)
+            - selected = true
+          option(value=opt.id selected=selected)= opt.name
+      else
+        option(value="")
     if !_.isEmpty(propertyErrors)
       .invalid-feedback= propertyErrors.map(({ message }) => message).join('. ')
 

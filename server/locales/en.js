@@ -9,6 +9,12 @@ export default {
       firstName: 'First name',
       lastName: 'Last name',
       name: 'Name',
+      description: 'Description',
+      status: 'Status',
+      executor: 'Executor',
+      labels: 'Labels',
+      statusId: 'Status',
+      executorId: 'Executor',
     },
     flash: {
       session: {
@@ -48,6 +54,21 @@ export default {
           success: 'Status updated successfully',
           error: 'Failed to update status',
         },
+      },
+      tasks: {
+        create: {
+          success: 'Task created successfully',
+          error: 'Failed to create task',
+        },
+        update: {
+          success: 'Task updated successfully',
+          error: 'Failed to update task',
+        },
+        delete: {
+          success: 'Task deleted successfully',
+          error: 'Failed to delete task',
+        },
+        notAllowedTask: 'Only the author can delete the task',
       },
       authError: 'Access denied! Please login',
     },
@@ -107,6 +128,24 @@ export default {
         edit: {
           title: 'Edit status',
         },
+      },
+      tasks: {
+        title: 'Tasks',
+        new: {
+          create: 'Create task',
+          title: 'Create task',
+          submit: 'Create',
+        },
+        edit: {
+          title: 'Edit task',
+          submit: 'Update',
+        },
+        id: 'ID',
+        name: 'Name',
+        status: 'Status',
+        executor: 'Executor',
+        creator: 'Creator',
+        createdAt: 'Created at',
       },
     },
   },

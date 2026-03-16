@@ -9,6 +9,12 @@ export default {
       firstName: 'Имя',
       lastName: 'Фамилия',
       name: 'Наименование',
+      description: 'Описание',
+      status: 'Статус',
+      executor: 'Исполнитель',
+      labels: 'Метки',
+      statusId: 'Статус',
+      executorId: 'Исполнитель',
     },
     flash: {
       session: {
@@ -48,6 +54,21 @@ export default {
           success: 'Статус успешно изменён',
           error: 'Не удалось изменить статус',
         },
+      },
+      tasks: {
+        create: {
+          success: 'Задача успешно создана',
+          error: 'Не удалось создать задачу',
+        },
+        update: {
+          success: 'Задача успешно изменена',
+          error: 'Не удалось изменить задачу',
+        },
+        delete: {
+          success: 'Задача успешно удалена',
+          error: 'Не удалось удалить задачу',
+        },
+        notAllowedTask: 'Задачу может удалить только её автор',
       },
       authError: 'Доступ запрещён! Пожалуйста, авторизируйтесь.',
     },
@@ -107,6 +128,24 @@ export default {
         edit: {
           title: 'Изменение статуса',
         },
+      },
+      tasks: {
+        title: 'Задачи',
+        new: {
+          create: 'Создать задачу',
+          submit: 'Создать',
+          title: 'Создание задачи',
+        },
+        edit: {
+          title: 'Изменение задачи',
+          submit: 'Изменить',
+        },
+        ID: 'ID',
+        name: 'Наименование',
+        status: 'Статус',
+        creator: 'Автор',
+        executor: 'Исполнитель',
+        createdAt: 'Дата создания',
       },
     },
   },

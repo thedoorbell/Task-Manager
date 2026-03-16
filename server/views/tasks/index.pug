@@ -1,0 +1,32 @@
+extends ../layouts/application.pug
+
+block header
+  = t('views.tasks.title')
+
+block content
+  a.btn.btn-primary(href=route('newTask'))= t('views.tasks.new.create')
+  .table-responsive
+    table.table.table-borderless.table-striped.mt-5.bg-white
+      thead
+        tr
+          th.py-3= t('views.tasks.id')
+          th.py-3= t('views.tasks.name')
+          th.py-3= t('views.tasks.status')
+          th.py-3= t('views.tasks.creator')
+          th.py-3= t('views.tasks.executor')
+          th.py-3= t('views.tasks.createdAt')
+          th.py-3
+      tbody
+        each task in tasks
+          tr
+            td= task.id
+            td
+              a(href=route('showTask', { id: task.id }))= task.name
+            td= task.status ? task.status.name : ''
+            td= task.creator ? `${task.creator.firstName} ${task.creator.lastName}` : ''
+            td= task.executor ? `${task.executor.firstName} ${task.executor.lastName}` : ''
+            td= formatDate(task.createdAt)
+            td
+              .d-flex
+                a.btn.btn-primary.me-1(href=route('editTask', { id: task.id }))= t('layouts.edit')
+                +buttonTo(route('deleteTask', { id: task.id }), 'delete')(class="btn btn-danger" value=t('layouts.delete'))

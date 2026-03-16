@@ -8,4 +8,4 @@ export const up = (knex) => {
   })
 }
 
-export const down = (knex) => knex.schema.dropTableIfExists('task_statuses')
+export const down = (knex) => knex.schema.dropTable('task_statuses')
