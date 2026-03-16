@@ -3,8 +3,6 @@
 import { fileURLToPath } from 'url'
 import path from 'path'
 import fastifyStatic from '@fastify/static'
-// NOTE: не поддердивает fastify 4.x
-// import fastifyErrorPage from 'fastify-error-page';
 import fastifyView from '@fastify/view'
 import fastifyFormbody from '@fastify/formbody'
 import fastifySecureSession from '@fastify/secure-session'
@@ -17,10 +15,10 @@ import qs from 'qs'
 import Pug from 'pug'
 import i18next from 'i18next'
 import dotenv from 'dotenv'
+import Rollbar from 'rollbar'
 
 import ru from './locales/ru.js'
 import en from './locales/en.js'
-// @ts-ignore
 import addRoutes from './routes/index.js'
 import getHelpers from './helpers/index.js'
 import * as knexConfig from '../knexfile.js'
@@ -30,9 +28,6 @@ import FormStrategy from './lib/passportStrategies/FormStrategy.js'
 const __dirname = fileURLToPath(path.dirname(import.meta.url))
 
 const mode = process.env.NODE_ENV || 'development'
-// const isDevelopment = mode === 'development'
-
-// Load env vars from .env first, then override with .env.<NODE_ENV> if present
 dotenv.config()
 if (process.env.NODE_ENV) {
   dotenv.config({ path: `./.env.${process.env.NODE_ENV}` })
@@ -53,7 +48,6 @@ const setUpViews = (app) => {
   })
 
   app.decorateReply('render', function render(viewPath, locals) {
-    // Ensure the view rendering promise is returned so Fastify waits for it.
     return this.view(viewPath, { ...locals, reply: this })
   })
 }
@@ -71,7 +65,6 @@ const setupLocalization = async () => {
     .init({
       lng: 'ru',
       fallbackLng: 'en',
-      // debug: isDevelopment,
       resources: {
         ru,
         en,
@@ -89,7 +82,6 @@ const addHooks = (app) => {
 
 const registerPlugins = async (app) => {
   await app.register(fastifySensible)
-  // await app.register(fastifyErrorPage);
   await app.register(fastifyReverseRoutes)
   await app.register(fastifyFormbody, { parser: qs.parse })
   await app.register(fastifySecureSession, {
@@ -113,7 +105,6 @@ const registerPlugins = async (app) => {
       failureRedirect: app.reverse('root'),
       failureFlash: i18next.t('flash.authError'),
     }
-  // @ts-ignore
   )(...args))
 
   await app.register(fastifyMethodOverride)
@@ -136,6 +127,31 @@ export default async (app, _options) => {
   setUpStaticAssets(app)
   addRoutes(app)
   addHooks(app)
+
+  const rollbar = new Rollbar({
+    accessToken: process.env.ROLLBAR_ACCESS_TOKEN,
+    environment: mode,
+  })
+
+  app.decorate('rollbar', rollbar)
+  app.setErrorHandler((error, req, reply) => {
+    rollbar.error(error, req)
+    reply.send(error)
+  })
+
+  app.addHook('onError', async (req, reply, error) => {
+    app.rollbar.error(error, req)
+  })
+
+  app.setNotFoundHandler((req, reply) => {
+    app.rollbar.info('404 Not Found', {
+      url: req.url,
+      method: req.method,
+      ip: req.ip,
+    })
+
+    return reply.status(404).view('errors/404')
+  })
 
   return app
 }
