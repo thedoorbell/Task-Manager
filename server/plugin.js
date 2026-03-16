@@ -143,15 +143,5 @@ export default async (app, _options) => {
     app.rollbar.error(error, req)
   })
 
-  app.setNotFoundHandler((req, reply) => {
-    app.rollbar.info('404 Not Found', {
-      url: req.url,
-      method: req.method,
-      ip: req.ip,
-    })
-
-    return reply.status(404).view('errors/404')
-  })
-
   return app
 }
