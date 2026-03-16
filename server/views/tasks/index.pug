@@ -4,7 +4,36 @@ block header
   = t('views.tasks.title')
 
 block content
-  a.btn.btn-primary(href=route('newTask'))= t('views.tasks.new.create')
+  a.btn.btn-primary.mb-5(href=route('newTask'))= t('views.tasks.new.create')
+  .card.shadow-sm
+    .card-body.p-4 
+      form(action=route('tasks') method='get')
+        .row
+          .col-12.col-md
+            .input-group.mb-3 
+              label.input-group-text(for='data_status')= t('views.tasks.status')
+              select.form-select(name='status' id='data_status')
+                option(value='')
+                each status in statuses
+                  option(value=status.id selected=(filters.status == status.id))= status.name
+          .col-12.col-md
+            .input-group.mb-3
+              label.input-group-text(for='data_executor')= t('views.tasks.executor')
+              select.form-select(name='executor' id='data_executor')
+                option(value='')
+                each user in users
+                  option(value=user.id selected=(filters.executor == user.id))= user.name
+          .col-12.col-md
+            .input-group.mb-3
+              label.input-group-text(for='data_label')= t('views.labels.label')
+              select.form-select(name='label' id='data_label')
+                option(value='')
+                each label in labels
+                  option(value=label.id selected=(filters.label == label.id))= label.name
+        .mb-3.form-check 
+          input.form-check-input(type='checkbox' name='isCreatorUser' id='data_isCreatorUser' checked=filters.isCreatorUser)
+          label.form-check-label(for='data_isCreatorUser')= t('views.tasks.isCreatorUser')
+        button.btn.btn-primary(type='submit')= t('views.tasks.filter')
   .table-responsive
     table.table.table-borderless.table-striped.mt-5.bg-white
       thead

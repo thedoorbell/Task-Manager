@@ -3,10 +3,48 @@ import i18next from 'i18next'
 export default (app) => {
   app
     .get('/tasks', { name: 'tasks' }, async (req, reply) => {
-      const tasks = await app.objection.models.task.query()
-        .withGraphJoined('[status, creator, executor, labels]')
-        .orderBy('id', 'desc')
-      return reply.render('tasks/index', { tasks })
+      const { status, executor, label, isCreatorUser } = req.query
+      let query = app.objection.models.task.query().withGraphJoined('[status, creator, executor, labels]')
+
+      if (status && status !== '') {
+        query = query.where('statusId', parseInt(status, 10))
+      }
+
+      if (executor && executor !== '') {
+        query = query.where('executorId', parseInt(executor, 10))
+      }
+
+      if (label && label !== '') {
+        query = query.whereExists(
+          app.objection.models.task.relatedQuery('labels').where('labels.id', parseInt(label, 10))
+        )
+      }
+
+      if (isCreatorUser === 'on' && req.user) {
+        query = query.where('creatorId', req.user.id)
+      }
+
+      const tasks = await query.orderBy('id', 'desc')
+      const statuses = await app.objection.models.taskStatus.query()
+      const users = await app.objection.models.user.query()
+      const labels = await app.objection.models.label.query()
+      const userNames = users.map((user) => ({
+        id: user.id,
+        name: `${user.firstName} ${user.lastName}`,
+      }))
+
+      return reply.render('tasks/index', {
+        tasks,
+        statuses,
+        users: userNames,
+        labels,
+        filters: {
+          status: status || '',
+          executor: executor || '',
+          label: label || '',
+          isCreatorUser: isCreatorUser === 'on',
+        },
+      })
     })
     .get('/tasks/new', { name: 'newTask', preValidation: app.authenticate }, async (req, reply) => {
       const task = new app.objection.models.task()
@@ -42,7 +80,7 @@ export default (app) => {
         name: `${user.firstName} ${user.lastName}`,
       }))
       const usersForSelect = [{ id: '', name: '' }, ...userNames]
-      const selectedLabelsIds = task.labels ? task.labels.map(l => l.id) : []
+      const selectedLabelsIds = task.labels ? task.labels.map((l) => l.id) : []
       return reply.render('tasks/edit', {
         task: { ...task, labels: selectedLabelsIds },
         statuses,
@@ -96,9 +134,9 @@ export default (app) => {
         }))
         const usersForSelect = [{ id: '', name: '' }, ...userNames]
         const statusesForSelect = [{ id: '', name: '' }, ...statuses]
-        const taskWithLabels = { 
-          ...taskData, 
-          labels: taskData.labels ? taskData.labels.filter(id => id && id !== '') : [] 
+        const taskWithLabels = {
+          ...taskData,
+          labels: taskData.labels ? taskData.labels.filter((id) => id && id !== '') : [],
         }
         return reply.render('tasks/new', {
           task: taskWithLabels,
@@ -156,7 +194,7 @@ export default (app) => {
         const taskWithId = {
           ...req.body.data,
           id,
-          labels: taskData.labels ? taskData.labels.filter(id => id && id !== '') : [],
+          labels: taskData.labels ? taskData.labels.filter((id) => id && id !== '') : [],
         }
         return reply.render('tasks/edit', {
           task: taskWithId,

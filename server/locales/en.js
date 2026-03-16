@@ -145,6 +145,8 @@ export default {
       },
       tasks: {
         title: 'Tasks',
+        isCreatorUser: 'Only my tasks',
+        filter: 'Show',
         new: {
           create: 'Create task',
           title: 'Create task',
@@ -163,6 +165,7 @@ export default {
       },
       labels: {
         title: 'Labels',
+        label: 'Label',
         id: 'ID',
         name: 'Name',
         createdAt: 'Created at',

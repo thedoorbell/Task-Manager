@@ -145,6 +145,8 @@ export default {
       },
       tasks: {
         title: 'Задачи',
+        isCreatorUser: 'Только мои задачи',
+        filter: 'Показать',
         new: {
           create: 'Создать задачу',
           submit: 'Создать',
@@ -163,6 +165,7 @@ export default {
       },
       labels: {
         title: 'Метки',
+        label: 'Метка',
         id: 'ID',
         name: 'Наименование',
         createdAt: 'Дата создания',

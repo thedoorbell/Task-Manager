@@ -162,6 +162,74 @@ describe('test tasks CRUD', () => {
     expect(task).toBeUndefined()
   })
 
+  it('filter by status, executor, label and creator', async () => {
+    const { cookie: ownerCookie } = await signIn(testData.users.existing)
+    const { user: executor } = await createUser()
+    const { params: otherUserParams } = await createUser()
+    const { cookie: otherUserCookie } = await signIn({ email: otherUserParams.email, password: otherUserParams.password })
+
+    const status1 = await createStatus('status-1')
+    const status2 = await createStatus('status-2')
+
+    const label1 = await models.label.query().insert({ name: 'label-1' })
+    const label2 = await models.label.query().insert({ name: 'label-2' })
+
+    const taskA = await createTask({ statusId: status1.id, executorId: executor.id, cookie: ownerCookie, data: { name: `task-A-${Date.now()}`, description: 'A', statusId: status1.id, executorId: executor.id, labels: [label1.id] } })
+    const taskB = await createTask({ statusId: status2.id, cookie: ownerCookie, data: { name: `task-B-${Date.now()}`, description: 'B', statusId: status2.id, executorId: '', labels: [label2.id] } })
+
+    const taskC = await createTask({ statusId: status1.id, cookie: ownerCookie, data: { name: `task-C-${Date.now()}`, description: 'C', statusId: status1.id, executorId: '' } })
+
+    const taskD = await createTask({ statusId: status1.id, cookie: otherUserCookie, data: { name: `task-D-${Date.now()}`, description: 'D', statusId: status1.id, executorId: '' } })
+
+    const responseStatus = await app.inject({
+      method: 'GET',
+      url: app.reverse('tasks'),
+      query: { status: status1.id.toString() },
+      cookies: ownerCookie,
+    })
+
+    expect(responseStatus.statusCode).toBe(200)
+    expect(responseStatus.body).toContain(taskA.taskData.name)
+    expect(responseStatus.body).toContain(taskC.taskData.name)
+    expect(responseStatus.body).not.toContain(taskB.taskData.name)
+
+    const responseExecutor = await app.inject({
+      method: 'GET',
+      url: app.reverse('tasks'),
+      query: { executor: executor.id.toString() },
+      cookies: ownerCookie,
+    })
+
+    expect(responseExecutor.statusCode).toBe(200)
+    expect(responseExecutor.body).toContain(taskA.taskData.name)
+    expect(responseExecutor.body).not.toContain(taskB.taskData.name)
+    expect(responseExecutor.body).not.toContain(taskC.taskData.name)
+
+    const responseLabel = await app.inject({
+      method: 'GET',
+      url: app.reverse('tasks'),
+      query: { label: label1.id.toString() },
+      cookies: ownerCookie,
+    })
+
+    expect(responseLabel.statusCode).toBe(200)
+    expect(responseLabel.body).toContain(taskA.taskData.name)
+    expect(responseLabel.body).not.toContain(taskB.taskData.name)
+
+    const responseCreator = await app.inject({
+      method: 'GET',
+      url: app.reverse('tasks'),
+      query: { isCreatorUser: 'on' },
+      cookies: ownerCookie,
+    })
+
+    expect(responseCreator.statusCode).toBe(200)
+    expect(responseCreator.body).toContain(taskA.taskData.name)
+    expect(responseCreator.body).toContain(taskB.taskData.name)
+    expect(responseCreator.body).toContain(taskC.taskData.name)
+    expect(responseCreator.body).not.toContain(taskD.taskData.name)
+  })
+
   it('show', async () => {
     const { cookie } = await signIn(testData.users.existing)
     const status = await createStatus()
