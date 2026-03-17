@@ -1,6 +1,11 @@
 import fastify from 'fastify';
 import init from '../server/plugin.js';
-import { getTestData, prepareData, generateUser, signIn } from './helpers/index.js';
+import {
+  getTestData,
+  prepareData,
+  generateUser,
+  signIn,
+} from './helpers/index.js';
 
 describe('test session', () => {
   let app;

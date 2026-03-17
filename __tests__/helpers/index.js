@@ -44,4 +44,3 @@ export const signIn = async (app, { email, password }) => {
 
   return { response, cookie };
 };
-
