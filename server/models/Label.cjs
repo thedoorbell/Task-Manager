@@ -17,7 +17,7 @@ module.exports = class Label extends BaseModel {
     return {
       tasks: {
         relation: BaseModel.ManyToManyRelation,
-        modelClass: () => require('./Task.cjs'),
+        modelClass: 'Task.cjs',
         join: {
           from: 'labels.id',
           through: {
