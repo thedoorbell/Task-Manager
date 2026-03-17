@@ -136,9 +136,8 @@ export default (app) => {
           const createdTask = await app.objection.models.task.query().insert(validTask);
 
           if (labelIds.length > 0) {
-            const relatePromises = labelIds.map((labelId) =>
-              createdTask.$relatedQuery('labels').relate(labelId),
-            );
+            const relatePromises = labelIds.map((labelId) => createdTask
+              .$relatedQuery('labels').relate(labelId));
             await Promise.all(relatePromises);
           }
 
@@ -201,9 +200,8 @@ export default (app) => {
 
           await task.$relatedQuery('labels').unrelate();
           if (labelIds.length > 0) {
-            const relatePromises = labelIds.map((labelId) =>
-              task.$relatedQuery('labels').relate(labelId),
-            );
+            const relatePromises = labelIds.map((labelId) => task
+              .$relatedQuery('labels').relate(labelId));
             await Promise.all(relatePromises);
           }
 

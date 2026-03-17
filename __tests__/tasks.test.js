@@ -24,10 +24,15 @@ describe('test tasks CRUD', () => {
     return { response, cookie };
   };
 
-  const createStatus = async (name = faker.word.noun()) =>
-    models.taskStatus.query().insert({ name });
+  const createStatus = async (name = faker.word.noun()) => models.taskStatus.query()
+    .insert({ name });
 
-  const createTask = async ({ statusId, executorId = null, cookie, data } = {}) => {
+  const createTask = async ({
+    statusId,
+    executorId = null,
+    cookie,
+    data,
+  } = {}) => {
     const taskData = data || {
       name: faker.lorem.words(3),
       description: faker.lorem.sentence(),
@@ -153,7 +158,14 @@ describe('test tasks CRUD', () => {
     const response = await app.inject({
       method: 'POST',
       url: app.reverse('tasks'),
-      payload: { data: { name: '', description: 'a', statusId: status.id, executorId: '' } },
+      payload: {
+        data: {
+          name: '',
+          description: 'a',
+          statusId: status.id,
+          executorId: '',
+        },
+      },
       cookies: cookie,
     });
 

@@ -30,7 +30,7 @@ export default [
     },
     rules: {
       semi: ['error', 'always'],
-      indent: ['error', 2],
+      indent: ['error', 2, { SwitchCase: 1 }],
       quotes: ['error', 'single'],
       'arrow-parens': ['error', 'always'],
       'comma-dangle': ['error', 'always-multiline'],
@@ -73,5 +73,3 @@ export default [
     },
   },
 ];
-
-

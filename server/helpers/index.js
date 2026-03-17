@@ -5,8 +5,6 @@ import _ from 'lodash';
 
 export default (app) => ({
   route(name, params) {
-    // Fastify's reverse helper (path-to-regexp) expects route params to be strings.
-    // Support passing a single id directly (number or string) for convenience.
     const normalizedParams = (() => {
       if (params === undefined) {
         return undefined;
@@ -32,16 +30,14 @@ export default (app) => ({
   _,
   getAlertClass(type) {
     switch (type) {
-    // case 'failure':
-    //   return 'danger';
-    case 'error':
-      return 'danger';
-    case 'success':
-      return 'success';
-    case 'info':
-      return 'info';
-    default:
-      throw new Error(`Unknown flash type: '${type}'`);
+      case 'error':
+        return 'danger';
+      case 'success':
+        return 'success';
+      case 'info':
+        return 'info';
+      default:
+        throw new Error(`Unknown flash type: '${type}'`);
     }
   },
   formatDate(str) {
