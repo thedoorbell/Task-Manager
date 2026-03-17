@@ -1,30 +1,15 @@
-// @ts-check
-
 import _ from 'lodash';
 import fastify from 'fastify';
 
 import init from '../server/plugin.js';
 import encrypt from '../server/lib/secure.cjs';
-import { getTestData, prepareData, generateUser } from './helpers/index.js';
+import { getTestData, prepareData, generateUser, signIn } from './helpers/index.js';
 
 describe('test users CRUD', () => {
   let app;
   let knex;
   let models;
   let testData;
-
-  const signIn = async ({ email, password }) => {
-    const response = await app.inject({
-      method: 'POST',
-      url: app.reverse('session'),
-      payload: { data: { email, password } },
-    });
-    const [sessionCookie] = response.cookies;
-    return {
-      response,
-      cookie: { [sessionCookie.name]: sessionCookie.value },
-    };
-  };
 
   const createUser = async (params) => {
     const userParams = params || generateUser();
@@ -46,10 +31,6 @@ describe('test users CRUD', () => {
     ({ knex } = app.objection);
     ({ models } = app.objection);
 
-    // TODO: пока один раз перед тестами
-    // тесты не должны зависеть друг от друга
-    // перед каждым тестом выполняем миграции
-    // и заполняем БД тестовыми данными
     await knex.migrate.latest();
     await prepareData(app);
     testData = getTestData();
@@ -119,7 +100,7 @@ describe('test users CRUD', () => {
 
   it('edit user only for owner', async () => {
     const { user: owner, params } = await createUser(generateUser());
-    const { cookie } = await signIn({ email: params.email, password: params.password });
+    const { cookie } = await signIn(app, { email: params.email, password: params.password });
 
     // Another user from fixtures
     const other = await models.user.query().first().whereNot({ id: owner.id });
@@ -135,7 +116,7 @@ describe('test users CRUD', () => {
 
   it('update user', async () => {
     const { user, params } = await createUser(generateUser());
-    const { cookie } = await signIn({ email: params.email, password: params.password });
+    const { cookie } = await signIn(app, { email: params.email, password: params.password });
 
     const newLastName = 'Updated';
     const response = await app.inject({
@@ -153,7 +134,7 @@ describe('test users CRUD', () => {
 
   it('update user with invalid data fails', async () => {
     const { user, params } = await createUser(generateUser());
-    const { cookie } = await signIn({ email: params.email, password: params.password });
+    const { cookie } = await signIn(app, { email: params.email, password: params.password });
 
     const response = await app.inject({
       method: 'PATCH',
@@ -170,7 +151,7 @@ describe('test users CRUD', () => {
 
   it('delete user', async () => {
     const { user, params } = await createUser(generateUser());
-    const { cookie } = await signIn({ email: params.email, password: params.password });
+    const { cookie } = await signIn(app, { email: params.email, password: params.password });
 
     const response = await app.inject({
       method: 'DELETE',
@@ -182,12 +163,6 @@ describe('test users CRUD', () => {
 
     const deleted = await models.user.query().findById(user.id);
     expect(deleted).toBeUndefined();
-  });
-
-  afterEach(async () => {
-    // Пока Segmentation fault: 11
-    // после каждого теста откатываем миграции
-    // await knex.migrate.rollback();
   });
 
   afterAll(async () => {

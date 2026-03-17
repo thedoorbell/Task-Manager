@@ -1,5 +1,3 @@
-// @ts-check
-
 import {
   describe,
   beforeAll,
@@ -9,26 +7,13 @@ import {
 import fastify from 'fastify';
 import { faker } from '@faker-js/faker';
 import init from '../server/plugin.js';
-import { getTestData, prepareData } from './helpers/index.js';
+import { getTestData, prepareData, signIn } from './helpers/index.js';
 
 describe('test statuses CRUD', () => {
   let app;
   let knex;
   let models;
   let testData;
-
-  const signIn = async ({ email, password }) => {
-    const response = await app.inject({
-      method: 'POST',
-      url: app.reverse('session'),
-      payload: { data: { email, password } },
-    });
-
-    const [sessionCookie] = response.cookies;
-    const cookie = sessionCookie ? { [sessionCookie.name]: sessionCookie.value } : {};
-
-    return { response, cookie };
-  };
 
   const createStatus = async (params, cookie) => {
     const statusParams = params || { name: faker.word.noun() };
@@ -68,7 +53,7 @@ describe('test statuses CRUD', () => {
   });
 
   it('new', async () => {
-    const { cookie } = await signIn(testData.users.existing);
+    const { cookie } = await signIn(app, testData.users.existing);
 
     const response = await app.inject({
       method: 'GET',
@@ -80,7 +65,7 @@ describe('test statuses CRUD', () => {
   });
 
   it('create', async () => {
-    const { cookie } = await signIn(testData.users.existing);
+    const { cookie } = await signIn(app, testData.users.existing);
     const { response, status, params } = await createStatus(undefined, cookie);
 
     expect(response.statusCode).toBe(302);
@@ -88,7 +73,7 @@ describe('test statuses CRUD', () => {
   });
 
   it('create with invalid name fails', async () => {
-    const { cookie } = await signIn(testData.users.existing);
+    const { cookie } = await signIn(app, testData.users.existing);
 
     const response = await app.inject({
       method: 'POST',
@@ -104,7 +89,7 @@ describe('test statuses CRUD', () => {
   });
 
   it('edit', async () => {
-    const { cookie } = await signIn(testData.users.existing);
+    const { cookie } = await signIn(app, testData.users.existing);
     const { status } = await createStatus(undefined, cookie);
 
     const response = await app.inject({
@@ -117,7 +102,7 @@ describe('test statuses CRUD', () => {
   });
 
   it('update', async () => {
-    const { cookie } = await signIn(testData.users.existing);
+    const { cookie } = await signIn(app, testData.users.existing);
     const { status } = await createStatus(undefined, cookie);
 
     const newName = faker.word.noun();
@@ -135,7 +120,7 @@ describe('test statuses CRUD', () => {
   });
 
   it('delete', async () => {
-    const { cookie } = await signIn(testData.users.existing);
+    const { cookie } = await signIn(app, testData.users.existing);
     const { status } = await createStatus(undefined, cookie);
 
     const response = await app.inject({

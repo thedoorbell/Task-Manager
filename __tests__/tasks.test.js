@@ -1,28 +1,13 @@
-// @ts-check
-
 import fastify from 'fastify';
 import { faker } from '@faker-js/faker';
 import init from '../server/plugin.js';
-import { getTestData, prepareData } from './helpers/index.js';
+import { getTestData, prepareData, signIn } from './helpers/index.js';
 
 describe('test tasks CRUD', () => {
   let app;
   let knex;
   let models;
   let testData;
-
-  const signIn = async ({ email, password }) => {
-    const response = await app.inject({
-      method: 'POST',
-      url: app.reverse('session'),
-      payload: { data: { email, password } },
-    });
-
-    const [sessionCookie] = response.cookies;
-    const cookie = sessionCookie ? { [sessionCookie.name]: sessionCookie.value } : {};
-
-    return { response, cookie };
-  };
 
   const createStatus = async (name = faker.word.noun()) => models.taskStatus.query()
     .insert({ name });
@@ -94,7 +79,7 @@ describe('test tasks CRUD', () => {
   });
 
   it('new', async () => {
-    const { cookie } = await signIn(testData.users.existing);
+    const { cookie } = await signIn(app, testData.users.existing);
 
     const response = await app.inject({
       method: 'GET',
@@ -106,7 +91,7 @@ describe('test tasks CRUD', () => {
   });
 
   it('create', async () => {
-    const { cookie } = await signIn(testData.users.existing);
+    const { cookie } = await signIn(app, testData.users.existing);
     const status = await createStatus();
 
     const { response, task, taskData } = await createTask({ statusId: status.id, cookie });
@@ -121,7 +106,7 @@ describe('test tasks CRUD', () => {
   });
 
   it('create with multiple labels works and persists', async () => {
-    const { cookie } = await signIn(testData.users.existing);
+    const { cookie } = await signIn(app, testData.users.existing);
     const status = await createStatus();
     const label1 = await models.label.query().insert({ name: 'label1' });
     const label2 = await models.label.query().insert({ name: 'label2' });
@@ -152,7 +137,7 @@ describe('test tasks CRUD', () => {
   });
 
   it('create with invalid name fails', async () => {
-    const { cookie } = await signIn(testData.users.existing);
+    const { cookie } = await signIn(app, testData.users.existing);
     const status = await createStatus();
 
     const response = await app.inject({
@@ -176,10 +161,10 @@ describe('test tasks CRUD', () => {
   });
 
   it('filter by status, executor, label and creator', async () => {
-    const { cookie: ownerCookie } = await signIn(testData.users.existing);
+    const { cookie: ownerCookie } = await signIn(app, testData.users.existing);
     const { user: executor } = await createUser();
     const { params: otherUserParams } = await createUser();
-    const { cookie: otherUserCookie } = await signIn({
+    const { cookie: otherUserCookie } = await signIn(app, {
       email: otherUserParams.email,
       password: otherUserParams.password,
     });
@@ -286,7 +271,7 @@ describe('test tasks CRUD', () => {
   });
 
   it('show', async () => {
-    const { cookie } = await signIn(testData.users.existing);
+    const { cookie } = await signIn(app, testData.users.existing);
     const status = await createStatus();
     const { task } = await createTask({ statusId: status.id, cookie });
 
@@ -300,7 +285,7 @@ describe('test tasks CRUD', () => {
   });
 
   it('edit', async () => {
-    const { cookie } = await signIn(testData.users.existing);
+    const { cookie } = await signIn(app, testData.users.existing);
     const status = await createStatus();
     const { task } = await createTask({ statusId: status.id, cookie });
 
@@ -314,7 +299,7 @@ describe('test tasks CRUD', () => {
   });
 
   it('update', async () => {
-    const { cookie } = await signIn(testData.users.existing);
+    const { cookie } = await signIn(app, testData.users.existing);
     const status = await createStatus();
     const { task } = await createTask({ statusId: status.id, cookie });
 
@@ -333,7 +318,7 @@ describe('test tasks CRUD', () => {
   });
 
   it('delete by creator', async () => {
-    const { cookie } = await signIn(testData.users.existing);
+    const { cookie } = await signIn(app, testData.users.existing);
     const status = await createStatus();
     const { task } = await createTask({ statusId: status.id, cookie });
 
@@ -350,12 +335,12 @@ describe('test tasks CRUD', () => {
   });
 
   it('delete not allowed for non-creator', async () => {
-    const { cookie: cookie1 } = await signIn(testData.users.existing);
+    const { cookie: cookie1 } = await signIn(app, testData.users.existing);
     const status = await createStatus();
     const { task } = await createTask({ statusId: status.id, cookie: cookie1 });
 
     const { params: secondUserParams } = await createUser();
-    const { cookie: cookie2 } = await signIn({
+    const { cookie: cookie2 } = await signIn(app, {
       email: secondUserParams.email,
       password: secondUserParams.password,
     });

@@ -1,11 +1,7 @@
-// @ts-check
-
 import { URL } from 'url';
 import fs from 'fs';
 import path from 'path';
 import { faker } from '@faker-js/faker';
-
-// TODO: использовать для фикстур https://github.com/viglucci/simple-knex-fixtures
 
 const getFixturePath = (filename) => path.join('..', '..', '__fixtures__', filename);
 const readFixture = (filename) => {
@@ -19,7 +15,6 @@ export const getTestData = () => getFixtureData('testData.json');
 export const prepareData = async (app) => {
   const { knex } = app.objection;
 
-  // получаем данные из фикстур и заполняем БД
   await knex('users').insert(getFixtureData('users.json'));
 };
 
@@ -37,3 +32,16 @@ export const generateUser = (overrides = {}) => {
     ...overrides,
   };
 };
+
+export const signIn = async (app, { email, password }) => {
+  const response = await app.inject({
+    method: 'POST',
+    url: app.reverse('session'),
+    payload: { data: { email, password } },
+  });
+  const [sessionCookie] = response.cookies;
+  const cookie = sessionCookie ? { [sessionCookie.name]: sessionCookie.value } : {};
+
+  return { response, cookie };
+};
+

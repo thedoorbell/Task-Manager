@@ -1,28 +1,13 @@
-// @ts-check
-
 import fastify from 'fastify';
 import { faker } from '@faker-js/faker';
 import init from '../server/plugin.js';
-import { getTestData, prepareData } from './helpers/index.js';
+import { getTestData, prepareData, signIn } from './helpers/index.js';
 
 describe('test labels CRUD', () => {
   let app;
   let knex;
   let models;
   let testData;
-
-  const signIn = async ({ email, password }) => {
-    const response = await app.inject({
-      method: 'POST',
-      url: app.reverse('session'),
-      payload: { data: { email, password } },
-    });
-
-    const [sessionCookie] = response.cookies;
-    const cookie = sessionCookie ? { [sessionCookie.name]: sessionCookie.value } : {};
-
-    return { response, cookie };
-  };
 
   const createLabel = async (name = faker.word.noun()) => {
     const label = await models.label.query().insert({ name });
@@ -77,7 +62,7 @@ describe('test labels CRUD', () => {
   });
 
   it('new', async () => {
-    const { cookie } = await signIn(testData.users.existing);
+    const { cookie } = await signIn(app, testData.users.existing);
 
     const response = await app.inject({
       method: 'GET',
@@ -89,7 +74,7 @@ describe('test labels CRUD', () => {
   });
 
   it('create', async () => {
-    const { cookie } = await signIn(testData.users.existing);
+    const { cookie } = await signIn(app, testData.users.existing);
     const labelName = faker.word.noun();
 
     const response = await app.inject({
@@ -107,7 +92,7 @@ describe('test labels CRUD', () => {
   });
 
   it('create invalid fails', async () => {
-    const { cookie } = await signIn(testData.users.existing);
+    const { cookie } = await signIn(app, testData.users.existing);
 
     const response = await app.inject({
       method: 'POST',
@@ -123,7 +108,7 @@ describe('test labels CRUD', () => {
   });
 
   it('edit', async () => {
-    const { cookie } = await signIn(testData.users.existing);
+    const { cookie } = await signIn(app, testData.users.existing);
     const label = await createLabel();
 
     const response = await app.inject({
@@ -136,7 +121,7 @@ describe('test labels CRUD', () => {
   });
 
   it('update', async () => {
-    const { cookie } = await signIn(testData.users.existing);
+    const { cookie } = await signIn(app, testData.users.existing);
     const label = await createLabel();
     const newName = `${label.name}-updated`;
 
@@ -154,7 +139,7 @@ describe('test labels CRUD', () => {
   });
 
   it('delete label with no tasks', async () => {
-    const { cookie } = await signIn(testData.users.existing);
+    const { cookie } = await signIn(app, testData.users.existing);
     const label = await createLabel();
 
     const response = await app.inject({
@@ -170,7 +155,7 @@ describe('test labels CRUD', () => {
   });
 
   it('delete label blocked when tasks exist', async () => {
-    const { cookie } = await signIn(testData.users.existing);
+    const { cookie } = await signIn(app, testData.users.existing);
     const status = await createStatus();
     const { task } = await createTask({ statusId: status.id, cookie });
     const label = await createLabel();
